@@ -83,6 +83,7 @@ export default {
 .RoyQRCode {
   height: 100%;
   width: 100%;
+
   canvas,
   img {
     width: 100%;

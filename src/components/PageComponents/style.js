@@ -156,6 +156,7 @@ export const StyledText = styled('div', textProps)`
     font-size: ${(props) => `${props.fontSize}pt`};
     font-family: ${(props) => (props.fontFamily === 'default' ? 'inherit' : `${props.fontFamily}`)};
   }
+
   table {
     table-layout: fixed;
     border-collapse: separate;
@@ -191,6 +192,7 @@ export const StyledSimpleText = styled('div', textProps)`
   font-family: ${(props) => (props.fontFamily === 'default' ? 'inherit' : `${props.fontFamily}`)};
   border: ${(props) => `${props.borderWidth}px ${props.borderType} ${props.borderColor}`};
   z-index: ${(props) => props.zIndex};
+
   .roy-simple-text-inner {
     height: 100%;
     display: flex;
@@ -250,6 +252,7 @@ export const StyledImage = styled('div', imageProps)`
   justify-content: center;
   background: ${(props) => props.background};
   padding: ${(props) => `${props.borderWidth}px`};
+
   img {
     height: 100%;
     border-radius: ${(props) =>
@@ -324,6 +327,7 @@ export const StyledStar = styled('div', starProps)`
   padding: 0;
   margin: 0;
   color: ${(props) => props.background};
+
   .roy-star-icon {
     font-size: ${(props) => `${props.height}px!important`};
     line-height: ${(props) => `${props.height}px!important`};
@@ -440,6 +444,7 @@ export const StyledComplexTable = styled('div', complexTableProps)`
     border-spacing: ${(props) => `${props.borderWidth}px`};
     background-color: ${(props) => `${props.borderColor}`};
   }
+
   .roy-complex-table__body td,
   .roy-complex-table__body th,
   .rendered-roy-complex-table__body td,
@@ -447,6 +452,7 @@ export const StyledComplexTable = styled('div', complexTableProps)`
     position: relative;
     background-color: ${(props) => `${props.background || '#FFF'}`};
   }
+
   .roy-complex-table__prefix,
   .roy-complex-table__suffix,
   .rendered-roy-text {

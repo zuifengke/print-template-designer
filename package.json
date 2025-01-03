@@ -38,6 +38,7 @@
     "nanoid": "^4.0.0",
     "normalize.css": "^8.0.1",
     "path-to-regexp": "^6.2.1",
+    "print-template-designer": "^0.1.15",
     "remixicon": "^3.0.0",
     "shepherd.js": "^10.0.1",
     "vue": "2.6.11",

@@ -69,6 +69,7 @@ export default {
   justify-content: start;
   margin-top: 8px;
   position: relative;
+
   label {
     font-size: 10px;
     color: var(--roy-text-color-disabled);
