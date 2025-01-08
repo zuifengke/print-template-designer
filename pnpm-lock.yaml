@@ -70,7 +70,7 @@ importers:
         version: 3.6.2(vue@2.6.11)
       vxe-table:
         specifier: ^3.6.6
-        version: 3.7.5(vue@2.6.11)(xe-utils@3.5.13)
+        version: 3.6.6(vue@2.6.11)(xe-utils@3.5.13)
       xe-utils:
         specifier: ^3.5.7
         version: 3.5.13
@@ -2044,9 +2044,6 @@ packages:
 
   dom-serializer@1.4.1:
     resolution: {integrity: sha512-VHwB3KfrcOOkelEG2ZOfxqLZdfkil8PtJi4P8N2MMXucZq2yLp75ClViUlOVwyoHEDjYU433Aq+5zWP61+RGag==}
-
-  dom-zindex@1.0.1:
-    resolution: {integrity: sha512-M/MERVDZ8hguvjl6MAlLWSLYLS7PzEyXaTb5gEeJ+SF+e9iUC0sdvlzqe91MMDHBoy+nqw7wKcUOrDSyvMCrRg==}
 
   dom7@3.0.0:
     resolution: {integrity: sha512-oNlcUdHsC4zb7Msx7JN3K0Nro1dzJ48knvBOnDPKJ2GV9wl1i5vydJZUSyOfrkKFDZEud/jBsTk92S/VGSAe/g==}
@@ -4280,8 +4277,8 @@ packages:
     peerDependencies:
       vue: ^2.0.0
 
-  vxe-table@3.7.5:
-    resolution: {integrity: sha512-/52qKkgYQs91MPSL0W6s2EioJqwuemb7lUtNqq0py6B64LZtw0OhA+HsjR9oqSjqujex8GTpzaewwLpvIqX49A==}
+  vxe-table@3.6.6:
+    resolution: {integrity: sha512-DKifb0ekFYCu0UkTE0r1BmkRhabnCnS1+ilnTwciuTyC/DzGfwi8s+8LjX7YMV+Jp+hr4CJubIzHPcP41M+JTg==}
     peerDependencies:
       vue: ^2.6.0
       xe-utils: ^3.5.0
@@ -6696,8 +6693,6 @@ snapshots:
       domhandler: 4.3.1
       entities: 2.2.0
 
-  dom-zindex@1.0.1: {}
-
   dom7@3.0.0:
     dependencies:
       ssr-window: 3.0.0
@@ -8224,7 +8219,7 @@ snapshots:
       vue-styled-components: 1.6.0
       vuedraggable: 2.24.3
       vuex: 3.6.2(vue@2.6.11)
-      vxe-table: 3.7.5(vue@2.6.11)(xe-utils@3.5.13)
+      vxe-table: 3.6.6(vue@2.6.11)(xe-utils@3.5.13)
       xe-utils: 3.5.13
     transitivePeerDependencies:
       - debug
@@ -9015,9 +9010,8 @@ snapshots:
     dependencies:
       vue: 2.6.11
 
-  vxe-table@3.7.5(vue@2.6.11)(xe-utils@3.5.13):
+  vxe-table@3.6.6(vue@2.6.11)(xe-utils@3.5.13):
     dependencies:
-      dom-zindex: 1.0.1
       vue: 2.6.11
       xe-utils: 3.5.13
 

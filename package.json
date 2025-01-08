@@ -1,25 +1,27 @@
 {
-  "name": "print-template-designer",
-  "version": "0.2.0",
+  "name": "hr-print-template-designer",
+  "version": "0.2.3",
   "private": false,
   "author": {
-    "email": "admin@royians.cn",
-    "name": "ROYIANS",
-    "url": "https://www.royians.cn"
+    "email": "yehui1989@qq.com",
+    "name": "zuifengke",
+    "url": "https://www.yuque.com/yehui-o3x1v"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/royians/print-template-designer.git"
+    "url": "git://github.com/zuifengke/print-template-designer.git"
   },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
-    "lib": "vue-cli-service build --target lib --name print-template-designer --dest lib src/components/index.js"
+    "lib": "vue-cli-service build --target lib --name hr-print-template-designer --dest lib src/components/index.js",
+    "package": "npm version patch && npm publish"
   },
-  "main": "lib/print-template-designer.umd.js",
+  "main": "lib/hr-print-template-designer.umd.js",
   "files": [
-    "lib"
+    "lib",
+    "types"
   ],
   "peerDependencies": {
     "vue": "^2.6.0",
