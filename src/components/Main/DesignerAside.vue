@@ -11,132 +11,137 @@
     <keep-alive>
       <component
         :is="curActiveComponent"
-        v-show="showRight"
         :key="curActiveComponentCode"
+        v-show="showRight"
         class="roy-designer-aside__right_panel"
       />
     </keep-alive>
   </section>
 </template>
 
-<script>
+<script setup>
 import commonMixin from '@/mixin/commonMixin'
 import { mapState } from 'vuex'
+import { onMounted, ref, watch, computed, reactive } from 'vue'
+import PageComponent from '@/components/Main/PageComponent.vue'
+import PagePalette from '@/components/Main/PagePalette.vue'
+import PageToc from '@/components/Main/PageToc.vue'
+import DataSource from '@/components/Main/DataSource.vue'
+import GlobalSetting from '@/components/Main/GlobalSetting.vue'
 
-export default {
-  name: 'DesignerAside',
-  mixins: [commonMixin],
-  data() {
-    return {
-      menuList: [
-        {
-          title: '组件',
-          code: 'component',
-          icon: 'ri-drag-drop-line',
-          activeIcon: 'ri-drag-drop-fill',
-          isActive: true,
-          relativeComponent: () => import('./PageComponent.vue')
-        },
-        {
-          title: '结构',
-          code: 'toc',
-          icon: 'ri-building-2-line',
-          activeIcon: 'ri-building-2-fill',
-          relativeComponent: () => import('./PageToc.vue')
-        },
-        {
-          title: '属性',
-          code: 'palette',
-          icon: 'ri-palette-line',
-          activeIcon: 'ri-palette-fill',
-          relativeComponent: () => import('./PagePalette.vue')
-        },
-        {
-          title: '数据源',
-          code: 'datasource',
-          icon: 'ri-database-2-line',
-          activeIcon: 'ri-database-2-fill',
-          relativeComponent: () => import('./DataSource.vue')
-        },
-        {
-          title: '全局',
-          code: 'setting',
-          icon: 'ri-settings-6-line',
-          activeIcon: 'ri-settings-6-fill',
-          relativeComponent: () => import('./GlobalSetting.vue')
-        }
-      ],
-      curActiveComponent: null,
-      curActiveComponentCode: ''
-    }
+const menuList = [
+  {
+    title: '组件',
+    code: 'component',
+    icon: 'ri-drag-drop-line',
+    activeIcon: 'ri-drag-drop-fill',
+    isActive: true,
+    relativeComponent: () => PageComponent
   },
-  props: {
-    showRight: {
-      type: Boolean,
-      default: true
-    }
+  {
+    title: '结构',
+    code: 'toc',
+    icon: 'ri-building-2-line',
+    activeIcon: 'ri-building-2-fill',
+    relativeComponent: () =>PageToc
   },
-  computed: {
-    ...mapState({
-      paletteCount: (state) => state.printTemplateModule.paletteCount,
-      globalCount: (state) => state.printTemplateModule.globalCount,
-      componentsCount: (state) => state.printTemplateModule.componentsCount,
-      isNightMode: (state) => state.printTemplateModule.nightMode.isNightMode
-    }),
-    asideStyle() {
-      return this.showRight ? 'width: 305px' : 'width: 65px'
-    }
+  {
+    title: '属性',
+    code: 'palette',
+    icon: 'ri-palette-line',
+    activeIcon: 'ri-palette-fill',
+    relativeComponent: () =>PagePalette
   },
-  methods: {
-    onMenuSelect(e, item) {
-      this.curActiveComponent = item.relativeComponent
-      this.curActiveComponentCode = item.code
-      this.menuList.forEach((mItem) => {
-        let isActive = false
-        if (item.code === mItem.code) {
-          isActive = true
-        }
-        this.$set(mItem, 'isActive', isActive)
-      })
-    },
-    clickPaletteMenu() {
-      this.$refs.sideMenu.$refs.menuItems.forEach((item) => {
-        if (item.item.code === 'palette' && this.curActiveComponentCode !== 'palette') {
-          this.onMenuSelect(null, item.item)
-        }
-      })
-    },
-    clickComponentMenu() {
-      this.$refs.sideMenu.$refs.menuItems.forEach((item) => {
-        if (item.item.code === 'component' && this.curActiveComponentCode !== 'component') {
-          this.onMenuSelect(null, item.item)
-        }
-      })
-    },
-    clickGlobalMenu() {
-      this.$refs.sideMenu.$refs.menuItems.forEach((item) => {
-        if (item.item.code === 'setting' && this.curActiveComponentCode !== 'setting') {
-          this.onMenuSelect(null, item.item)
-        }
-      })
-    }
+  {
+    title: '数据源',
+    code: 'datasource',
+    icon: 'ri-database-2-line',
+    activeIcon: 'ri-database-2-fill',
+    relativeComponent: () =>DataSource
   },
-  mounted() {
-    this.curActiveComponent = this.menuList[0].relativeComponent
-    this.curActiveComponentCode = this.menuList[0].code
-  },
-  watch: {
-    paletteCount() {
-      this.clickPaletteMenu()
-    },
-    componentsCount() {
-      this.clickComponentMenu()
-    },
-    globalCount() {
-      this.clickGlobalMenu()
-    }
+  {
+    title: '全局',
+    code: 'setting',
+    icon: 'ri-settings-6-line',
+    activeIcon: 'ri-settings-6-fill',
+    relativeComponent: () =>GlobalSetting
   }
+]
+
+const curActiveComponent = ref(null)
+const curActiveComponentCode = ref('')
+
+const showRight = ref(true)
+
+const paletteCount = ref(0)
+const globalCount = ref(0)
+const componentsCount = ref(0)
+const isNightMode = ref(false)
+const sideMenu = ref(null)
+const asideStyle = computed(() => {
+  return showRight.value ? 'width: 305px' : 'width: 65px'
+})
+computed(mapState, () => {
+  return {
+    paletteCount: (state) => state.printTemplateModule.paletteCount,
+    globalCount: (state) => state.printTemplateModule.globalCount,
+    componentsCount: (state) => state.printTemplateModule.componentsCount,
+    isNightMode: (state) => state.printTemplateModule.nightMode.isNightMode
+  }
+})
+
+function onMenuSelect(e, item) {
+  curActiveComponent.value = item.relativeComponent()
+  curActiveComponentCode.value = item.code
+  menuList.forEach((mItem) => {
+    let isActive = false
+    if (item.code === mItem.code) {
+      isActive = true
+    }
+    mItem.isActive = isActive
+  })
 }
+
+function clickPaletteMenu() {
+  sideMenu.value.$refs.menuItems.forEach((item) => {
+    if (item.item.code === 'palette' && curActiveComponentCode.value !== 'palette') {
+      onMenuSelect(null, item.item)
+    }
+  })
+}
+
+function clickComponentMenu() {
+  sideMenu.value.$refs.menuItems.forEach((item) => {
+    if (item.item.code === 'component' && curActiveComponentCode.value !== 'component') {
+      onMenuSelect(null, item.item)
+    }
+  })
+}
+
+function clickGlobalMenu() {
+  sideMenu.value.$refs.menuItems.forEach((item) => {
+    if (item.item.code === 'setting' && curActiveComponentCode.value !== 'setting') {
+      onMenuSelect(null, item.item)
+    }
+  })
+}
+
+onMounted(() => {
+  curActiveComponent.value = menuList[0].relativeComponent()
+  curActiveComponentCode.value = menuList[0].code
+})
+
+watch(paletteCount, () => {
+  clickPaletteMenu()
+})
+
+watch(componentsCount, () => {
+  clickComponentMenu()
+})
+
+watch(globalCount, () => {
+  clickGlobalMenu()
+})
 </script>
 
 <style lang="scss" scoped>

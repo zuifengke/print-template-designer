@@ -44,7 +44,7 @@ export default {
   methods: {
     initMounted() {
       // 监听元素移动和不移动的事件
-      eventBus.$on('move', (isDownward, isRightward, curX, curY) => {
+      eventBus.on('move', (isDownward, isRightward, curX, curY) => {
         this.showCoordinate = true
         this.x = curX
         this.y = curY
@@ -52,7 +52,7 @@ export default {
         this.top = new Big(this.curComponent.style.top).div(new Big(5)).toNumber()
       })
 
-      eventBus.$on('unmove', () => {
+      eventBus.on('unmove', () => {
         this.showCoordinate = false
       })
     }

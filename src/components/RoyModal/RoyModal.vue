@@ -25,6 +25,9 @@
 </template>
 
 <script>
+import {VXETable} from 'vxe-table'
+import {Modal} from 'vxe-table'
+
 export default {
   name: 'RoyModal',
   components: {},

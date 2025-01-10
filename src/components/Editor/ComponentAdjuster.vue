@@ -407,7 +407,7 @@ export default {
       e.preventDefault()
     },
     handleMouseDownOnShape(e) {
-      this.$nextTick(() => eventBus.$emit('componentClick'))
+      this.$nextTick(() => eventBus.emit('componentClick'))
 
       this.$store.commit('printTemplateModule/setInEditorStatus', true)
       this.$store.commit('printTemplateModule/setClickComponentStatus', true)
@@ -465,14 +465,14 @@ export default {
           // 后面两个参数代表鼠标移动方向
           // curY - startY > 0 true 表示向下移动 false 表示向上移动
           // curX - startX > 0 true 表示向右移动 false 表示向左移动
-          eventBus.$emit('move', curY - startY > 0, curX - startX > 0, curX, curY)
+          eventBus.emit('move', curY - startY > 0, curX - startX > 0, curX, curY)
         })
       }
 
       const up = () => {
         hasMove && this.$store.commit('printTemplateModule/recordSnapshot')
         // 触发元素停止移动事件，用于隐藏标线
-        eventBus.$emit('unmove')
+        eventBus.emit('unmove')
         document.removeEventListener('mousemove', move)
         document.removeEventListener('mouseup', up)
       }

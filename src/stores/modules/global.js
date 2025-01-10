@@ -130,7 +130,8 @@ export const mutations = {
         }
       }
       if (newComponentIndex !== null) {
-        Vue.set(componentData, newComponentIndex, newComponentValue)
+        //Vue.set(componentData, newComponentIndex, newComponentValue)
+        componentData.newComponentIndex = newComponentValue
         store.commit('printTemplateModule/recordSnapshot')
       }
     }
@@ -148,7 +149,8 @@ export const mutations = {
         }
       }
       if (newComponentIndex !== null) {
-        Vue.set(componentData, newComponentIndex, newComponentValue)
+        //Vue.set(componentData, newComponentIndex, newComponentValue)
+        componentData.newComponentIndex = newComponentValue
         store.commit('printTemplateModule/recordSnapshot')
       }
     }
@@ -166,7 +168,8 @@ export const mutations = {
         }
       }
       if (newComponentIndex !== null) {
-        Vue.set(componentData, newComponentIndex, newComponentValue)
+        //Vue.set(componentData, newComponentIndex, newComponentValue)
+        componentData.newComponentIndex = newComponentValue
         store.commit('printTemplateModule/recordSnapshot')
       }
     }
@@ -229,7 +232,8 @@ export const mutations = {
   },
 
   setComponentData(state, componentData = []) {
-    Vue.set(state, 'componentData', componentData)
+    //Vue.set(state, 'componentData', componentData)
+    state.componentData =componentData;
   },
 
   addComponent(state, { component, index }) {

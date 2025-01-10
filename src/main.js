@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import { createApp } from 'vue'
 import store from './stores/index.js'
 
 import App from './App.vue'
@@ -7,18 +7,22 @@ import PrintDesigner from './components/index.js'
 
 import 'remixicon/fonts/remixicon.css'
 import VXETable from 'vxe-table'
-import '@/assets/vxevarible.scss'
+import 'vxe-table/lib/style.css'
 
-Vue.use(VXETable)
-Vue.use(PrintDesigner, {
+import '@/assets/vxevarible.scss'
+import VxeUI from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
+
+const app = createApp(App);
+app.use(VXETable)
+app.use(VxeUI)
+app.use(PrintDesigner, {
   store
 })
-Vue.prototype.$VXETable = VXETable
-Vue.prototype.$XModal = VXETable.modal
-Vue.config.productionTip = false
+app.config.globalProperties.$VXETable = VXETable
+app.config.globalProperties.$XModal = VXETable.modal
+app.config.productionTip = false
+app.use(router)
+app.use(store);
+app.mount('#roy-app')
 
-new Vue({
-  router,
-  store,
-  render: (h) => h(App)
-}).$mount('#roy-app')

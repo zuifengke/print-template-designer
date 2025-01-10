@@ -3,8 +3,10 @@ import toast from '@/utils/toast'
 
 const swap = (arr, i, j) => {
   const temp = arr[i]
-  Vue.set(arr, i, arr[j])
-  Vue.set(arr, j, temp)
+  //Vue.set(arr, i, arr[j])
+  arr[i]=arr[j]
+  //Vue.set(arr, j, temp)
+  arr[j]=temp
 }
 
 export default {

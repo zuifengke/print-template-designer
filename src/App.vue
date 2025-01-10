@@ -159,6 +159,7 @@ export default {
 <style lang="scss">
 html,
 body,
+#roy-app,
 .height-all {
   height: 100%;
 }

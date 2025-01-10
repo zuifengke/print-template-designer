@@ -1,6 +1,6 @@
 <!--
 * @description 加载界面
-* @filename index.vue
+* @filename main.vue
 * @author ROYIANS
 * @date 2022/11/21 10:03
 !-->

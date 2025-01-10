@@ -1,47 +1,38 @@
-<!--
-* @description
-* @filename RoyContainer.vue
-* @author ROYIANS
-* @date 2023/4/3 10:22
-!-->
 <template>
   <section :class="{ 'is-vertical': isVertical }" class="roy-container">
     <slot></slot>
   </section>
 </template>
 
-<script>
+<script setup>import { computed, useSlots } from 'vue'
+
 /**
- *  容器组件
+ * 容器组件
  */
-export default {
-  name: 'RoyContainer',
-  componentName: 'RoyContainer',
-  components: {},
-  props: {
-    direction: String
-  },
-  data() {
-    return {}
-  },
-  computed: {
-    isVertical() {
-      if (this.direction === 'vertical') {
-        return true
-      } else if (this.direction === 'horizontal') {
-        return false
-      }
-      return this.$slots && this.$slots.default
-        ? this.$slots.default.some((vnode) => {
-            const tag = vnode.componentOptions && vnode.componentOptions.tag
-            return tag === 'roy-header' || tag === 'roy-footer'
-          })
-        : false
-    }
-  },
-  methods: {},
-  created() {},
-  mounted() {},
-  watch: {}
-}
+const slots = useSlots()
+
+// eslint-disable-next-line no-undef
+const props = defineProps({
+  direction: {
+    type: String,
+    default: ''
+  }
+})
+
+const isVertical = computed(() => {
+  if (props.direction === 'vertical') {
+    return true
+  } else if (props.direction === 'horizontal') {
+    return false
+  }
+
+  // 检查是否有特定的子组件存在
+  return slots.default?.()
+    ? slots.default().some((vnode) => {
+      const tag = vnode.type.name
+      return tag === 'RoyHeader' || tag === 'RoyFooter'
+    })
+    : false
+})
+
 </script>

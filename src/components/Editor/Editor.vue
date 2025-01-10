@@ -587,8 +587,8 @@ export default {
       handler() {
         this.$nextTick(() => {
           this.handleScroll()
-          this.$refs.sketchRuler?.$children[0]?.$children[0]?.drawRuler()
-          this.$refs.sketchRuler?.$children[1]?.$children[0]?.drawRuler()
+          //this.$refs.sketchRuler?.$children[0]?.$children[0]?.drawRuler()
+          //this.$refs.sketchRuler?.$children[1]?.$children[0]?.drawRuler()
         })
       }
     }

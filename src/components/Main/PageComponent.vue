@@ -18,36 +18,27 @@
         <span>{{ item.name }}</span>
       </div>
     </div>
+
   </div>
 </template>
 
-<script>
-import { componentList, groupList } from '@/components/config/componentList.js'
+<script setup>
 
-export default {
-  name: 'PageComponent',
-  data() {
-    return {
-      groupListItems: groupList
-    }
-  },
-  computed: {
-    componentItemsMap() {
-      let res = {}
-      componentList.forEach((comp) => {
-        const group = comp.group
-        let groupData = res[group] || []
-        groupData.push(comp)
-        res[group] = groupData
-      })
-      return res
-    }
-  },
-  methods: {
-    handleDragStart(e) {
-      e.dataTransfer.setData('code', e.target.dataset.code)
-    }
-  }
+import { componentList, groupList } from '@/components/config/componentList.js'
+import { ref } from 'vue'
+
+const groupListItems = ref(groupList)
+
+const componentItemsMap = ref({})
+componentList.forEach((comp) => {
+  const group = comp.group
+  let groupData = componentItemsMap.value[group] || []
+  groupData.push(comp)
+  componentItemsMap.value[group] = groupData
+})
+
+function handleDragStart(e) {
+  e.dataTransfer.setData('code', e.target.dataset.code)
 }
 </script>
 

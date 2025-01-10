@@ -8,108 +8,114 @@
     @mousemove="handleMove"
   />
 </template>
-<script>
+<script setup>
 import { drawHorizontalRuler, drawVerticalRuler } from './utils'
-
+import { onMounted, ref, watch } from 'vue'
+const  $canvas = ref();
+const canvasContext = ref();
 const getValueByOffset = (offset, start, scale) => Math.round(start + offset / scale)
-export default {
-  name: 'CanvasRuler',
-  data() {
-    return {
-      $canvas: {},
-      canvasContext: {}
-    }
-  },
-  props: {
-    vertical: Boolean,
-    start: Number,
-    scale: Number,
-    width: Number,
-    height: Number,
-    canvasConfigs: Object,
-    selectStart: Number,
-    selectLength: Number
-  },
-  watch: {
-    start() {
-      this.drawRuler()
-    },
-    width() {
-      this.updateCanvasContext()
-      this.drawRuler()
-    },
-    height() {
-      this.updateCanvasContext()
-      this.drawRuler()
-    }
-  },
-  methods: {
-    initCanvasRef() {
-      this.$canvas = this.$refs.$canvas
-      this.canvasContext = this.$canvas && this.$canvas.getContext('2d')
-    },
-    updateCanvasContext() {
-      const { ratio } = this.canvasConfigs
 
-      // 比例宽高
-      this.$canvas.width = this.width * ratio
-      this.$canvas.height = this.height * ratio
+// eslint-disable-next-line no-undef
+const props= defineProps({
+  vertical: Boolean,
+  start: Number,
+  scale: Number,
+  width: Number,
+  height: Number,
+  canvasConfigs: Object,
+  selectStart: Number,
+  selectLength: Number
+})
+// eslint-disable-next-line no-undef
+const emit = defineEmits(['onAddLine', 'onIndicatorShow', 'onIndicatorMove', 'onIndicatorHide'])
 
-      const ctx = this.$canvas.getContext('2d')
-      ctx.font = `${12 * ratio}px -apple-system,
+watch(() => props.start, () => {
+  drawRuler()
+})
+
+watch(() => props.width, () => {
+  updateCanvasContext()
+  drawRuler()
+})
+
+watch(() => props.height, () => {
+  updateCanvasContext()
+  drawRuler()
+})
+
+function initCanvasRef() {
+  //$canvas.value = $refs.$canvas
+  canvasContext.value = $canvas.value?.getContext('2d')
+}
+
+function updateCanvasContext() {
+  const { ratio } = props.canvasConfigs
+  if (!$canvas.value) {
+    return
+  }
+  // 比例宽高
+  $canvas.value.width = props.width * ratio
+  $canvas.value.height = props.height * ratio
+
+  const ctx = $canvas.value.getContext('2d')
+  ctx.font = `${12 * ratio}px -apple-system,
                 "Helvetica Neue", ".SFNSText-Regular",
                 "SF UI Text", Arial, "PingFang SC", "Hiragino Sans GB",
                 "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif`
-      ctx.lineWidth = 1
-      ctx.textBaseline = 'middle'
-    },
-    drawRuler() {
-      const options = {
-        scale: this.scale,
-        width: this.width,
-        height: this.height,
-        canvasConfigs: this.canvasConfigs
-      }
+  ctx.lineWidth = 1
+  ctx.textBaseline = 'middle'
+}
 
-      if (this.vertical) {
-        drawVerticalRuler(
-          this.canvasContext,
-          this.start,
-          { y: this.selectStart, height: this.selectLength },
-          options
-        )
-      } else {
-        drawHorizontalRuler(
-          this.canvasContext,
-          this.start,
-          { x: this.selectStart, width: this.selectLength },
-          options
-        )
-      }
-    },
-    handleClick(e) {
-      const offset = this.vertical ? e.offsetY : e.offsetX
-      const value = getValueByOffset(offset, this.start, this.scale)
-      this.$emit('onAddLine', value)
-    },
-    handleEnter(e) {
-      const offset = this.vertical ? e.offsetY : e.offsetX
-      const value = getValueByOffset(offset, this.start, this.scale)
-      this.$emit('onIndicatorShow', value)
-    },
-    handleMove(e) {
-      const offset = this.vertical ? e.offsetY : e.offsetX
-      const value = getValueByOffset(offset, this.start, this.scale)
-      this.$emit('onIndicatorMove', value)
-    },
-    handleLeave() {
-      this.$emit('onIndicatorHide')
-    }
-  },
-  mounted() {
-    this.initCanvasRef()
-    this.updateCanvasContext()
-    this.drawRuler()
+function drawRuler() {
+  const options = {
+    scale: props.scale,
+    width: props.width,
+    height: props.height,
+    canvasConfigs: props.canvasConfigs
+  }
+
+  if (props.vertical) {
+    drawVerticalRuler(
+      canvasContext.value,
+      props.start,
+      { y: props.selectStart, height: props.selectLength },
+      options
+    )
+  } else {
+    drawHorizontalRuler(
+      canvasContext.value,
+      props.start,
+      { x: props.selectStart, width: props.selectLength },
+      options
+    )
   }
 }
+
+function handleClick(e) {
+  const offset = props.vertical ? e.offsetY : e.offsetX
+  const value = getValueByOffset(offset, props.start, props.scale)
+  emit('onAddLine', value)
+}
+
+function handleEnter(e) {
+  const offset = props.vertical ? e.offsetY : e.offsetX
+  const value = getValueByOffset(offset, props.start, props.scale)
+  emit('onIndicatorShow', value)
+}
+
+function handleMove(e) {
+  const offset = props.vertical ? e.offsetY : e.offsetX
+  const value = getValueByOffset(offset, props.start, props.scale)
+  emit('onIndicatorMove', value)
+}
+
+function handleLeave() {
+  emit('onIndicatorHide')
+}
+
+onMounted(() => {
+  initCanvasRef()
+  updateCanvasContext()
+  drawRuler()
+})
 </script>

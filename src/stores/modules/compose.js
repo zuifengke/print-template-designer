@@ -67,7 +67,7 @@ export default {
         component: groupComponent
       })
 
-      eventBus.$emit('hideArea')
+      eventBus.emit('hideArea')
 
       store.commit('printTemplateModule/batchDeleteComponent', areaData.components)
       store.commit('printTemplateModule/setCurComponent', {

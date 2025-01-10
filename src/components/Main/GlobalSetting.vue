@@ -6,27 +6,28 @@
 !-->
 <template>
   <roy-main class="roy-designer-global">
-    <vxe-form
-      ref="global-setting-form"
-      :align="formGlobalConfigIn.align"
-      :data="globalSettingConfig"
-      :items="globalSettingItem"
-      :loading="formGlobalConfigIn.loading"
-      :prevent-submit="formGlobalConfigIn.preventSubmit"
-      :rules="{}"
-      :size="formGlobalConfigIn.size"
-      :span="formGlobalConfigIn.span"
-      :title-align="formGlobalConfigIn.titleAlign"
-      :title-colon="formGlobalConfigIn.titleColon"
-      :title-overflow="formGlobalConfigIn.titleOverflow"
-      :title-width="formGlobalConfigIn.titleWidth"
-      :valid-config="formGlobalConfigIn.validConfig"
-      sync-resize
-    />
+<!--    <vxe-form-->
+<!--      ref="global-setting-form"-->
+<!--      :align="formGlobalConfigIn.align"-->
+<!--      :data="globalSettingConfig"-->
+<!--      :items="globalSettingItem"-->
+<!--      :loading="formGlobalConfigIn.loading"-->
+<!--      :prevent-submit="formGlobalConfigIn.preventSubmit"-->
+<!--      :rules="{}"-->
+<!--      :size="formGlobalConfigIn.size"-->
+<!--      :span="formGlobalConfigIn.span"-->
+<!--      :title-align="formGlobalConfigIn.titleAlign"-->
+<!--      :title-colon="formGlobalConfigIn.titleColon"-->
+<!--      :title-overflow="formGlobalConfigIn.titleOverflow"-->
+<!--      :title-width="formGlobalConfigIn.titleWidth"-->
+<!--      :valid-config="formGlobalConfigIn.validConfig"-->
+<!--      sync-resize-->
+<!--    />-->
     <roy-row class="roy-designer-global__pages">
       <roy-col :span="24" class="roy-designer-global__title">纸张大小:</roy-col>
       <roy-col :span="24">
         <div class="roy-designer-global__pages__container">
+
           <div
             v-for="page in Object.values(pages)"
             :key="page.name"

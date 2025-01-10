@@ -23,7 +23,9 @@ const FONT_SCALE = 0.83 // 10 / 12
 export const drawHorizontalRuler = (ctx, start, shadow, options) => {
   const { scale, width, height, canvasConfigs } = options
   const { bgColor, fontColor, shadowColor, ratio, longfgColor, shortfgColor } = canvasConfigs
-
+  if(ctx === null || ctx === undefined){
+    return
+  }
   // 缩放ctx, 以简化计算
   ctx.scale(ratio, ratio)
   ctx.clearRect(0, 0, width, height)
@@ -93,7 +95,9 @@ export const drawHorizontalRuler = (ctx, start, shadow, options) => {
 export const drawVerticalRuler = (ctx, start, shadow, options) => {
   const { scale, width, height, canvasConfigs } = options
   const { bgColor, fontColor, shadowColor, ratio, longfgColor, shortfgColor } = canvasConfigs
-
+  if(ctx === null || ctx === undefined){
+    return
+  }
   // 缩放ctx, 以简化计算
   ctx.scale(ratio, ratio)
   ctx.clearRect(0, 0, width, height)

@@ -24,120 +24,155 @@
   </div>
 </template>
 
-<script>
-/**
- * 提示
- */
-export default {
-  name: 'RoyToast',
-  components: {},
-  props: {},
-  data() {
-    return {
-      visible: false,
-      dangerouslyUseHTMLString: false,
-      message: '',
-      status: '',
-      duration: 5000,
-      copiedDuration: 0,
-      onClose: null,
-      verticalOffset: 0,
-      timer: null,
-      pauseTimer: null,
-      isPaused: false,
-      tikDownInterval: null
-    }
+<script setup>
+import {
+  ref,
+  computed,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+  defineProps,
+  getCurrentInstance,
+
+} from 'vue'
+
+let copiedDuration = 0;
+let timer = null
+let pauseTimer = null
+const isPaused = ref(false)
+let tikDownInterval =null
+let { proxy } = getCurrentInstance();
+let {
+  status,
+  duration,
+  message,
+  dangerouslyUseHTMLString,
+  verticalOffset,
+  onClose,
+  visible
+} = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
   },
-  computed: {
-    icon() {
-      switch (this.status) {
-        case 'info':
-          return 'ri-information-line'
-        case 'success':
-          return 'ri-checkbox-circle-line'
-        case 'warning':
-          return 'ri-error-warning-line'
-        case 'error':
-          return 'ri-close-circle-line'
-        default:
-          return ''
-      }
-    },
-    positionStyle() {
-      return {
-        top: `${this.verticalOffset}px`,
-        '--duration': `${Math.floor(this.duration / 1000)}s`
-      }
-    }
+  message: {
+    type: String,
+    default: ''
   },
-  methods: {
-    close() {
-      this.visible = false
-      this.onClose(this)
-      this.$destroy()
-      this.$el.parentNode.removeChild(this.$el)
-    },
-    clearTimer() {
-      if (this.timer !== null) {
-        clearTimeout(this.timer)
-      }
-      if (this.pauseTimer !== null) {
-        clearTimeout(this.pauseTimer)
-      }
-      if (this.tikDownInterval !== null) {
-        clearInterval(this.tikDownInterval)
-      }
-    },
-    doPause() {
-      this.pauseTimer = setTimeout(() => {
-        this.doRestart(true)
-      }, 2000)
-    },
-    doContinue() {
-      if (this.timer !== null) {
-        clearTimeout(this.pauseTimer)
-      }
-      this.doRestart(false)
-      this.pauseTimer = null
-    },
-    doRestart(isIn) {
-      if (isIn) {
-        this.clearTimer()
-        this.isPaused = true
-      } else {
-        if (this.isPaused) {
-          this.startTimer()
-          this.isPaused = false
-        }
-      }
-    },
-    startTimer() {
-      if (this.copiedDuration === 0) {
-        this.copiedDuration = this.duration
-      }
-      if (this.duration > 0) {
-        this.timer = setTimeout(() => {
-          this.close()
-        }, this.copiedDuration)
-        this.tikDownInterval = setInterval(() => {
-          if (this.copiedDuration > 1000) {
-            this.copiedDuration -= 1000
-          }
-        }, 1000)
-      }
-    }
+  status: {
+    type: String,
+    default: 'info'
   },
-  created() {},
-  mounted() {
-    this.startTimer()
+  duration: {
+    type: Number,
+    default: 5000
   },
-  beforeDestroy() {
-    this.clearTimer()
-    this.timer = null
-    this.pauseTimer = null
+  dangerouslyUseHTMLString: {
+    type: Boolean,
+    default: false
   },
-  watch: {}
+  onClose: {
+    type: Function,
+    default: null
+  },
+  verticalOffset: {
+    type: Number,
+    default: 0
+  }
+})
+const icon = computed(() => {
+  switch (status) {
+    case 'info':
+      return 'ri-information-line'
+    case 'success':
+      return 'ri-checkbox-circle-line'
+    case 'warning':
+      return 'ri-error-warning-line'
+    case 'error':
+      return 'ri-close-circle-line'
+    default:
+      return ''
+  }
+})
+
+const positionStyle = computed(() => {
+  return {
+    top: `${verticalOffset}px`,
+    '--duration': `${Math.floor(duration / 1000)}s`
+  }
+})
+
+function close() {
+  visible = false
+  onClose(proxy.$el.id);
+  if (proxy.$el?.parentNode) {
+    proxy.$el.parentNode.removeChild(proxy.$el)
+  }
 }
+
+function clearTimer() {
+  if (timer !== null) {
+    clearTimeout(timer)
+  }
+  if (pauseTimer !== null) {
+    clearTimeout(pauseTimer)
+  }
+  if (tikDownInterval !== null) {
+    clearInterval(tikDownInterval)
+  }
+}
+
+function doPause() {
+  pauseTimer = setTimeout(() => {
+    doRestart(true)
+  }, 2000)
+}
+
+function doContinue() {
+  if (timer !== null) {
+    clearTimeout(pauseTimer)
+  }
+  doRestart(false)
+  pauseTimer = null
+}
+
+function doRestart(isIn) {
+  if (isIn) {
+    clearTimer()
+    isPaused.value = true
+  } else {
+    if (isPaused.value) {
+      startTimer()
+      isPaused.value = false
+    }
+  }
+}
+
+function startTimer() {
+  if (copiedDuration === 0) {
+    copiedDuration = duration
+  }
+  if (duration > 0) {
+    timer = setTimeout(() => {
+      close()
+    }, copiedDuration)
+    tikDownInterval = setInterval(() => {
+      if (copiedDuration >= 1000) {
+        copiedDuration -= 1000
+      }
+    }, 1000)
+  }
+}
+
+onMounted(() => {
+  startTimer()
+})
+
+onBeforeUnmount(() => {
+  clearTimer()
+  timer.value = null
+  pauseTimer.value = null
+})
 </script>
 
 <style lang="scss">
