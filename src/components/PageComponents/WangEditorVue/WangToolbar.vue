@@ -1,41 +1,40 @@
 <script>
 import { createToolbar, DomEditor } from '@wangeditor/editor'
-
+import { h, ref, watch, onMounted } from 'vue'
 export default {
   name: 'WangToolbar',
-  render(h) {
+  render() {
     return h('div', { ref: 'box' })
   },
   props: ['editor', 'defaultConfig', 'mode'],
-  methods: {
-    // 创建 toolbar
-    create(editor) {
-      if (this.$refs.box == null) {
-        return
-      }
-      if (editor == null) {
-        return
-      }
-      if (DomEditor.getToolbar(editor)) {
-        return
-      } // 不重复创建
+  setup(props) {
+    const box = ref(null)
+
+    const create = (editor) => {
+      if (!box.value || !editor) return
+      if (DomEditor.getToolbar(editor)) return // 不重复创建
       createToolbar({
         editor,
-        selector: this.$refs.box,
-        config: this.defaultConfig || {},
-        mode: this.mode || 'default'
+        selector: box.value,
+        config: props.defaultConfig || {},
+        mode: props.mode || 'default'
       })
     }
-  },
-  watch: {
-    editor: {
-      handler(e) {
-        if (e == null) {
-          return
-        }
-        this.create(e)
-      },
-      immediate: true
+
+    watch(() => props.editor, (newEditor) => {
+      if (newEditor) {
+        create(newEditor)
+      }
+    }, { immediate: true })
+
+    onMounted(() => {
+      if (props.editor) {
+        create(props.editor)
+      }
+    })
+
+    return {
+      box
     }
   }
 }

@@ -6,28 +6,27 @@
 !-->
 <template>
   <roy-main class="roy-designer-global">
-<!--    <vxe-form-->
-<!--      ref="global-setting-form"-->
-<!--      :align="formGlobalConfigIn.align"-->
-<!--      :data="globalSettingConfig"-->
-<!--      :items="globalSettingItem"-->
-<!--      :loading="formGlobalConfigIn.loading"-->
-<!--      :prevent-submit="formGlobalConfigIn.preventSubmit"-->
-<!--      :rules="{}"-->
-<!--      :size="formGlobalConfigIn.size"-->
-<!--      :span="formGlobalConfigIn.span"-->
-<!--      :title-align="formGlobalConfigIn.titleAlign"-->
-<!--      :title-colon="formGlobalConfigIn.titleColon"-->
-<!--      :title-overflow="formGlobalConfigIn.titleOverflow"-->
-<!--      :title-width="formGlobalConfigIn.titleWidth"-->
-<!--      :valid-config="formGlobalConfigIn.validConfig"-->
-<!--      sync-resize-->
-<!--    />-->
+    <vxe-form
+      ref="global-setting-form"
+      :align="formGlobalConfigIn.align"
+      :data="globalSettingConfig"
+      :items="globalSettingItem"
+      :loading="formGlobalConfigIn.loading"
+      :prevent-submit="formGlobalConfigIn.preventSubmit"
+      :rules="{}"
+      :size="formGlobalConfigIn.size"
+      :span="formGlobalConfigIn.span"
+      :title-align="formGlobalConfigIn.titleAlign"
+      :title-colon="formGlobalConfigIn.titleColon"
+      :title-overflow="formGlobalConfigIn.titleOverflow"
+      :title-width="formGlobalConfigIn.titleWidth"
+      :valid-config="formGlobalConfigIn.validConfig"
+      sync-resize
+    />
     <roy-row class="roy-designer-global__pages">
       <roy-col :span="24" class="roy-designer-global__title">纸张大小:</roy-col>
       <roy-col :span="24">
         <div class="roy-designer-global__pages__container">
-
           <div
             v-for="page in Object.values(pages)"
             :key="page.name"
@@ -186,7 +185,7 @@ export default {
           field: 'title',
           span: 24,
           itemRender: {
-            name: '$input'
+            name: 'VxeInput'
           }
         },
         {
@@ -194,7 +193,7 @@ export default {
           field: 'pageDirection',
           span: 24,
           itemRender: {
-            name: '$select',
+            name: 'VxeSelect',
             options: [
               {
                 label: '横向',
@@ -215,7 +214,7 @@ export default {
           field: 'pageLayout',
           span: 24,
           itemRender: {
-            name: '$select',
+            name: 'VxeSelect',
             options: [
               {
                 label: '固定位置',
@@ -233,9 +232,9 @@ export default {
           field: 'pageMarginTop',
           span: 24,
           itemRender: {
-            name: '$input',
+            name: 'VxeNumberInput',
             props: {
-              type: 'number',
+              type: 'integer',
               min: 0,
               max: 50
             }
@@ -246,7 +245,7 @@ export default {
           field: 'pageMarginBottom',
           span: 24,
           itemRender: {
-            name: '$input',
+            name: 'VxeNumberInput',
             props: {
               type: 'number',
               min: 0,
@@ -259,7 +258,7 @@ export default {
           field: 'background',
           span: 24,
           itemRender: {
-            name: '$colorPicker',
+            name: 'VxeColorPicker',
             props: {}
           }
         },
@@ -268,7 +267,7 @@ export default {
           field: 'fontFamily',
           span: 24,
           itemRender: {
-            name: '$select',
+            name: 'VxeSelect',
             options: [
               {
                 label: '宋体',
@@ -298,7 +297,7 @@ export default {
           field: 'lineHeight',
           span: 24,
           itemRender: {
-            name: '$select',
+            name: 'VxeSelect',
             options: [
               {
                 value: '1',
@@ -322,30 +321,30 @@ export default {
               }
             ]
           }
+        },
+        {
+          title: '默认字体颜色',
+          field: 'color',
+          span: 24,
+          itemRender: {
+            name: 'VxeColorPicker',
+            props: {}
+          }
+        },
+        {
+          title: '默认字体大小（pt）',
+          field: 'fontSize',
+          span: 24,
+          itemRender: {
+            name: 'VxeNumberInput',
+            props: {
+              type: 'number',
+              size: 'mini',
+              min: 10,
+              max: 120
+            }
+          }
         }
-        // {
-        //   title: '默认字体颜色',
-        //   field: 'color',
-        //   span: 24,
-        //   itemRender: {
-        //     name: '$colorPicker',
-        //     props: {}
-        //   }
-        // },
-        // {
-        //   title: '默认字体大小（pt）',
-        //   field: 'fontSize',
-        //   span: 24,
-        //   itemRender: {
-        //     name: '$input',
-        //     props: {
-        //       type: 'number',
-        //       size: 'mini',
-        //       min: 10,
-        //       max: 120
-        //     }
-        //   }
-        // }
       ]
     }
   },
@@ -391,19 +390,21 @@ export default {
   padding: 12px 8px;
   font-size: 12px;
 
-  .vxe-form.size--medium .vxe-form--item-inner {
+  .vxe-form.size--medium .vxe-form--item-row .vxe-form--item {
     display: grid;
   }
 
   .vxe-form--item-title {
-    font-size: 10px;
+    min-height: 16px !important;
+    padding: 1px !important;
+    font-size: 12px;
     text-align: left !important;
-    margin-bottom: 5px;
-
+    //margin-bottom: 4px;
+    //padding: 6px 5px;
     .vxe-form--item-title-label:before {
       content: '';
       width: 1px;
-      height: 80%;
+      height: 20px;
       margin-right: 5px;
       border-left: var(--roy-color-primary) 3px solid;
     }

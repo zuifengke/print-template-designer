@@ -25,9 +25,7 @@
 </template>
 
 <script>
-import {VXETable} from 'vxe-table'
-import {Modal} from 'vxe-table'
-
+import { ref, watch, onMounted } from 'vue'
 export default {
   name: 'RoyModal',
   components: {},
@@ -57,26 +55,28 @@ export default {
       default: false
     }
   },
-  data() {
+  setup(props, { emit }) {
+    const visibleIn = ref(props.show)
+
+    const close = () => {
+      emit('close')
+      emit('update:show', false)
+    }
+
+    watch(
+      () => props.show,
+      (newVal) => {
+        visibleIn.value = newVal
+      }
+    )
+
+    onMounted(() => {
+      // 如果有需要初始化的操作，可以放在这里
+    })
+
     return {
-      visibleIn: this.show
-    }
-  },
-  methods: {
-    initMounted() {},
-    close() {
-      this.$emit('close')
-      this.$emit('update:show', false)
-    }
-  },
-  created() {},
-  mounted() {
-    this.initMounted()
-  },
-  destroyed() {},
-  watch: {
-    show() {
-      this.visibleIn = this.show
+      visibleIn,
+      close
     }
   }
 }

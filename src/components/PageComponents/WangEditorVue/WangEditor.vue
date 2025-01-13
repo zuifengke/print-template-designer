@@ -1,5 +1,6 @@
 <script>
 import { createEditor } from '@wangeditor/editor'
+import { ref, onMounted, watch, computed,h } from 'vue'
 
 function genErrorInfo(fnName) {
   let info = `请使用 '@${fnName}' 事件，不要放在 props 中`
@@ -9,123 +10,115 @@ function genErrorInfo(fnName) {
 
 export default {
   //【注意】单独写 <template>...</template> 时，rollup 打包完浏览器运行时报错，所以先在这里写 template
-  render(h) {
+  name: 'WangEditor',
+  props: ['defaultContent', 'defaultConfig', 'mode', 'defaultHtml', 'value'], // value 用于自定义 v-model
+  render() {
     return h('div', { ref: 'box' })
   },
-  name: 'WangEditor',
-  data() {
-    return {
-      curValue: '',
-      editor: null
-    }
-  },
-  props: ['defaultContent', 'defaultConfig', 'mode', 'defaultHtml', 'value'], // value 用于自定义 v-model
-  mounted() {
-    this.create()
-  },
-  watch: {
-    // 监听 'value' 属性变化 - value 用于自定义 v-model
-    value(newVal) {
-      const isEqual = newVal === this.curValue
-      if (isEqual) {
-        return
-      } // 和当前内容一样，则忽略
-      // 重置 HTML
-      this.setHtml(newVal)
-    }
-  },
-  methods: {
-    // 重置 HTML
-    setHtml(newHtml) {
-      const editor = this.editor
-      if (editor == null) {
-        return
-      }
+  setup(props, { emit }) {
+    const box = ref(null)
+    let editor = null
+    let curValue = ''
+
+    const setHtml = (newHtml) => {
+      if (!editor) return
       editor.setHtml(newHtml)
-    },
-    // 创建 editor
-    create() {
-      if (this.$refs.box == null) {
-        return
-      }
-      const defaultConfig = this.defaultConfig || {}
+    }
+
+    const create = () => {
+      if (!box.value) return
+      const defaultConfig = props.defaultConfig || {}
       const defaultContent = JSON.stringify(
-        Array.isArray(this.defaultContent) ? this.defaultContent : []
+        Array.isArray(props.defaultContent) ? props.defaultContent : []
       )
       createEditor({
-        selector: this.$refs.box,
-        html: this.defaultHtml || this.value || '',
+        selector: box.value,
+        html: props.defaultHtml || props.value || '',
         config: {
           ...defaultConfig,
-          onCreated: (editor) => {
-            this.editor = Object.seal(editor) // 注意，一定要用 Object.seal() 否则会报错
-            this.$emit('onCreated', editor)
+          onCreated: (editorInstance) => {
+            editor = Object.seal(editorInstance)
+            emit('onCreated', editor)
             if (defaultConfig.onCreated) {
               const info = genErrorInfo('onCreated')
               throw new Error(info)
             }
           },
-          onChange: (editor) => {
-            const editorHtml = editor.getHtml()
-            this.curValue = editorHtml // 记录当前 html 内容
-            this.$emit('input', editorHtml) // 用于自定义 v-model
-            this.$emit('onChange', editor)
+          onChange: (editorInstance) => {
+            const editorHtml = editorInstance.getHtml()
+            curValue = editorHtml
+            emit('input', editorHtml)
+            emit('onChange', editorInstance)
             if (defaultConfig.onChange) {
               const info = genErrorInfo('onChange')
               throw new Error(info)
             }
           },
-          onDestroyed: (editor) => {
-            this.$emit('onDestroyed', editor)
+          onDestroyed: (editorInstance) => {
+            emit('onDestroyed', editorInstance)
             if (defaultConfig.onDestroyed) {
               const info = genErrorInfo('onDestroyed')
               throw new Error(info)
             }
           },
-          onMaxLength: (editor) => {
-            this.$emit('onMaxLength', editor)
+          onMaxLength: (editorInstance) => {
+            emit('onMaxLength', editorInstance)
             if (defaultConfig.onMaxLength) {
               const info = genErrorInfo('onMaxLength')
               throw new Error(info)
             }
           },
-          onFocus: (editor) => {
-            this.$emit('onFocus', editor)
+          onFocus: (editorInstance) => {
+            emit('onFocus', editorInstance)
             if (defaultConfig.onFocus) {
               const info = genErrorInfo('onFocus')
               throw new Error(info)
             }
           },
-          onBlur: (editor) => {
-            this.$emit('onBlur', editor)
+          onBlur: (editorInstance) => {
+            emit('onBlur', editorInstance)
             if (defaultConfig.onBlur) {
               const info = genErrorInfo('onBlur')
               throw new Error(info)
             }
           },
           customAlert: (info, type) => {
-            this.$emit('customAlert', info, type)
+            emit('customAlert', info, type)
             if (defaultConfig.customAlert) {
               const info = genErrorInfo('customAlert')
               throw new Error(info)
             }
           },
-          customPaste: (editor, event) => {
+          customPaste: (editorInstance, event) => {
             if (defaultConfig.customPaste) {
               const info = genErrorInfo('customPaste')
               throw new Error(info)
             }
             let res
-            this.$emit('customPaste', editor, event, (val) => {
+            emit('customPaste', editorInstance, event, (val) => {
               res = val
             })
             return res
           }
         },
         content: JSON.parse(defaultContent),
-        mode: this.mode || 'default'
+        mode: props.mode || 'default'
       })
     }
-  }
+    watch(() => props.value, (newVal) => {
+      const isEqual = newVal === curValue
+      if (isEqual) return
+      setHtml(newVal)
+    }, { immediate: true })
+    onMounted(() => {
+      create()
+    })
+
+    return {
+      box,
+      curValue,
+      editor
+    }
+  },
 }
 </script>

@@ -19,7 +19,7 @@ import printTemplateModule from './modules/index.js'
 const debug = process.env.NODE_ENV !== 'production'
 
 const store = createStore({
-  strict: debug,
+  strict: false,
   modules: {
     printTemplateModule
   }
