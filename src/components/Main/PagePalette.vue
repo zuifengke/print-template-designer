@@ -1,6 +1,6 @@
 <template>
   <div v-if="initCompleted" class="roy-page-tools">
-    <div v-if="curActiveComponent && curActiveComponent.id">
+    <div v-if="curActiveComponent">
       <roy-divider v-if="settingFormItemConfig.length" content-position="left">
         属性设置
       </roy-divider>
@@ -47,73 +47,70 @@
   </div>
 </template>
 
-<script>
-import { mapState } from 'vuex'
+<script setup>
+import { reactive, computed, watch, ref, onMounted, nextTick } from 'vue'
+import { useStore } from 'vuex'
 import commonMixin from '@/mixin/commonMixin'
 import { paletteConfigList, settingConfigList } from '@/components/config/paletteConfig'
 
-export default {
-  name: 'PagePalette',
-  mixins: [commonMixin],
-  computed: {
-    ...mapState({
-      curComponent: (state) => state.printTemplateModule.curComponent,
-      curTableCell: (state) => state.printTemplateModule.curTableCell
-    }),
-    formItemConfig() {
-      let curComponentCode = this.curActiveComponent?.component || 'no'
-      return this.formItemConfigs[curComponentCode] || []
-    },
-    settingFormItemConfig() {
-      let curComponentCode = this.curActiveComponent?.component || 'no'
-      return this.settingFormItemConfigs[curComponentCode] || []
-    },
-    curActiveComponent() {
-      return this.curTableCell || this.curComponent
-    }
-  },
-  data() {
-    return {
-      initCompleted: false,
-      formGlobalConfigIn: {
-        titleOverflow: true,
-        span: 8,
-        align: 'left',
-        size: 'medium',
-        titleAlign: 'right',
-        titleWidth: '200',
-        titleColon: false,
-        preventSubmit: false,
-        loading: false,
-        validConfig: {
-          autoPos: true
-        }
-      },
-      formData: {},
-      formItemConfigs: paletteConfigList,
-      settingFormData: {},
-      settingFormItemConfigs: settingConfigList
-    }
-  },
-  methods: {},
-  async mounted() {
-    this.$nextTick(() => {
-      this.initCompleted = true
-    })
-  },
-  watch: {
-    curActiveComponent: {
-      handler() {
-        if (this.curActiveComponent) {
-          this.formData = this.curActiveComponent.style
-          this.settingFormData = this.curActiveComponent
-        }
-      },
-      deep: true,
-      immediate: true
-    }
+const store = useStore()
+const formItemConfig = computed(() => {
+  let curComponentCode = curActiveComponent.value?.component || 'no'
+  return formItemConfigs[curComponentCode] || []
+})
+const settingFormItemConfig = computed(() => {
+  let curComponentCode = curActiveComponent.value?.component || 'no'
+  return settingFormItemConfigs[curComponentCode] || []
+})
+const curActiveComponent = computed(() => {
+  if (curTableCell.value) {
+    return curTableCell.value
+  }
+  return curComponent.value
+})
+
+// 使用 computed 函数来创建响应式的计算属性
+const curComponent = computed(() => store.state.printTemplateModule.curComponent)
+const curTableCell = computed(() => store.state.printTemplateModule.curTableCell)
+
+const formData = ref({})
+const formItemConfigs = paletteConfigList
+const settingFormData = ref({})
+const settingFormItemConfigs = settingConfigList
+const initCompleted = ref(false)
+const formGlobalConfigIn = {
+  titleOverflow: true,
+  span: 8,
+  align: 'left',
+  size: 'medium',
+  titleAlign: 'right',
+  titleWidth: '200',
+  titleColon: false,
+  preventSubmit: false,
+  loading: false,
+  validConfig: {
+    autoPos: true
   }
 }
+onMounted(() => {
+  nextTick(() => {
+    initCompleted.value = true
+  })
+})
+
+watch(
+  curActiveComponent,
+  (newValue) => {
+    if (newValue) {
+      formData.value = newValue.style
+      settingFormData.value = newValue
+    }
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
 </script>
 
 <style lang="scss" scoped>
@@ -145,14 +142,16 @@ export default {
 
 <style lang="scss">
 .roy-page-tools {
-  .vxe-form.size--medium .vxe-form--item-inner {
+  .vxe-form.size--medium .vxe-form--item-row .vxe-form--item {
     display: grid;
   }
 
   .vxe-form--item-title {
+    min-height: 16px !important;
+    padding: 1px !important;
     font-size: 10px;
     text-align: left !important;
-    margin-bottom: 5px;
+    margin-bottom: 1px;
 
     .vxe-form--item-title-label:before {
       content: '';

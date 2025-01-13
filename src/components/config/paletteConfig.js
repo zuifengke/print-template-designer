@@ -11,7 +11,7 @@ export const paletteConfigList = {
       field: 'width',
       span: 24,
       itemRender: {
-        name: '$input',
+        name: 'VxeNumberInput',
         props: {
           type: 'number',
           size: 'mini',

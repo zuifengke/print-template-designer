@@ -1,8 +1,8 @@
 <template >
   <div
-    :class="[data?.staticClass, 'roy-divider', `roy-divider--${props.direction}`]"
-    v-bind="data?.attrs"
-    v-on="listeners"
+    :class="[props?.staticClass, 'roy-divider', `roy-divider--${props.direction}`]"
+    v-bind="props?.attrs"
+    v-on="props?.listeners"
   >
     <div
       v-if="slots.default && props.direction !== 'vertical'"
@@ -14,7 +14,9 @@
 </template>
 
 <script setup>
-import { computed ,defineProps} from 'vue'
+import { computed, defineProps, useSlots } from 'vue'
+
+const slots = useSlots()
 const props = defineProps({
   direction: {
     type: String,

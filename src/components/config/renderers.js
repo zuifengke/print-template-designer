@@ -1,8 +1,8 @@
 export const renderers = {
   $btnRadioGroup: {
     renderItemContent(h, renderOpts, params) {
-      let { options = [] } = renderOpts
-      let { data } = params
+      let { options = [] } = renderOpts?.item.itemRender
+      let { data } = renderOpts
       if (options && options.length) {
         return [
           <div class="roy-btn-radio-group">
@@ -52,7 +52,7 @@ export const renderers = {
   },
   $colorPicker: {
     renderItemContent(h, renderOpts, params) {
-      let { property, data } = params
+      let { property, data } = renderOpts
       return [
         <roy-color-picker
           modelValue={data[property]}
