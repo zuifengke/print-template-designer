@@ -5,29 +5,44 @@
 * @date 2023/1/13 17:05
 !-->
 <template>
-  <RoyModal v-if="visibleIn" :show.sync="visibleIn" height="80%" title="预设模板" width="70%">
-    <roy-main class="TemplateViews">
-      <div class="cards">
-        <div v-for="(item, index) in templateData" :key="index" class="card">
-          <div class="card__image-holder">
-            <img :src="item.img" alt="wave" class="card__image" />
-          </div>
-          <div class="card__title">
-            <div class="card__btn" @click="load(item.url)">
-              <i class="ri-zoom-in-line"></i>
+  <div>
+    <div>1111111</div> <button @click="visibleIn = !visibleIn">关闭</button>
+    <RoyModal v-if="visibleIn" :show="visibleIn" height="80%" title="预设模板" width="70%"
+              @update:show="visibleIn = $event">
+      <roy-main class="TemplateViews">
+        <div class="cards">
+          <div v-for="(item, index) in templateData" :key="index" class="card">
+            <div class="card__image-holder">
+              <img :src="item.img" alt="wave" class="card__image" />
             </div>
-            <h3>
-              {{ item.title }}
-              <small>{{ item.desp }}</small>
-            </h3>
+            <div class="card__title">
+              <div class="card__btn" @click="load(item.url)">
+                <i class="ri-zoom-in-line"></i>
+              </div>
+              <h3>
+                {{ item.title }}
+                <small>{{ item.desp }}</small>
+              </h3>
+            </div>
           </div>
         </div>
-      </div>
-    </roy-main>
-  </RoyModal>
+      </roy-main>
+    </RoyModal>
+  </div>
 </template>
 
-<script>
+<script setup>
+import {
+  reactive,
+  computed,
+  watch,
+  ref,
+  onMounted,
+  nextTick,
+  defineEmits,
+  onBeforeMount,
+  defineExpose
+} from 'vue'
 import commonMixin from '@/mixin/commonMixin'
 import RoyModal from '@/components/RoyModal/RoyModal'
 import axios from 'axios'
@@ -38,62 +53,54 @@ axios.defaults.baseURL = '/print-template-designer'
 axios.defaults.withCredentials = false
 axios.defaults.headers.post['Content-Type'] = 'application/json'
 
-/**
- *
- */
-export default {
-  name: 'TemplateViews',
-  mixins: [commonMixin],
-  components: {
-    RoyModal
+const visibleIn = ref(false)
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: true
+  }
+})
+const templateData = [
+  {
+    url: '/templates/comp-purchase-template.rptd',
+    img: 'https://s2.loli.net/2023/01/13/4iJbdwgy5rpI8em.png',
+    title: '公司采购安排单',
+    desp: '测试用'
   },
-  props: {
-    visible: {
-      type: Boolean,
-      default: true
-    }
-  },
-  data() {
-    return {
-      visibleIn: false,
-      templateData: [
-        {
-          url: '/templates/comp-purchase-template.rptd',
-          img: 'https://s2.loli.net/2023/01/13/4iJbdwgy5rpI8em.png',
-          title: '公司采购安排单',
-          desp: '测试用'
-        },
-        {
-          url: '/templates/complex-text.rptd',
-          img: 'https://s2.loli.net/2023/09/27/i4cpTfgHj2bNxSZ.png',
-          title: '富文本分页测试',
-          desp: '测试用'
-        }
-      ]
-    }
-  },
-  methods: {
-    initMounted() {},
-    async load(url) {
-      let res = await axios.get(url)
+  {
+    url: '/templates/complex-text.rptd',
+    img: 'https://s2.loli.net/2023/09/27/i4cpTfgHj2bNxSZ.png',
+    title: '富文本分页测试',
+    desp: '测试用'
+  }
+]
+const emit = defineEmits(['update:visible'])
+watch(
+   visibleIn,
+  (newVal) => {
+    emit('update:visible', newVal)
+  }
+)
+const initMounteded = () => {}
+onBeforeMount(() => {
+  visibleIn.value = props.visible
+})
+onMounted(() => {
+  initMounteded()
+})
+const load = (url) => {
+  axios
+    .get(url)
+    .then((res) => {
       if (res && res.data && res.data.componentData) {
-        this.$emit('load', res.data)
+        emit('load', res.data)
       } else {
         toast('拉取模板失败')
       }
-    }
-  },
-  created() {
-    this.visibleIn = this.visible
-  },
-  mounted() {
-    this.initMounted()
-  },
-  watch: {
-    visibleIn(newVal) {
-      this.$emit('update:visible', newVal)
-    }
-  }
+    })
+    .catch((err) => {
+      toast('拉取模板失败')
+    })
 }
 </script>
 

@@ -6,7 +6,7 @@
 !-->
 <template>
   <vxe-modal
-    v-model="visibleIn"
+    :modelValue="visibleIn"
     :height="height"
     :show-footer="showFooter"
     :title="title"
@@ -18,68 +18,51 @@
     @close="close"
   >
     <slot></slot>
-    <template v-slot:footer>
+    <template v-if="showFooter" #footer>
       <slot name="footer"></slot>
     </template>
   </vxe-modal>
 </template>
 
-<script>
-import { ref, watch, onMounted } from 'vue'
-export default {
-  name: 'RoyModal',
-  components: {},
-  props: {
-    appendToBody: {
-      type: Boolean,
-      default: true
-    },
-    show: {
-      type: Boolean,
-      default: false
-    },
-    width: {
-      type: String,
-      default: '50%'
-    },
-    height: {
-      type: String,
-      default: '50%'
-    },
-    title: {
-      type: String,
-      default: '消息'
-    },
-    showFooter: {
-      type: Boolean,
-      default: false
-    }
+<script setup>
+import { ref, watch, onMounted,defineEmits } from 'vue'
+
+const props = defineProps({
+  appendToBody: {
+    type: Boolean,
+    default: true
   },
-  setup(props, { emit }) {
-    const visibleIn = ref(props.show)
-
-    const close = () => {
-      emit('close')
-      emit('update:show', false)
-    }
-
-    watch(
-      () => props.show,
-      (newVal) => {
-        visibleIn.value = newVal
-      }
-    )
-
-    onMounted(() => {
-      // 如果有需要初始化的操作，可以放在这里
-    })
-
-    return {
-      visibleIn,
-      close
-    }
+  show: {
+    type: Boolean,
+    default: false
+  },
+  width: {
+    type: String,
+    default: '50%'
+  },
+  height: {
+    type: String,
+    default: '50%'
+  },
+  title: {
+    type: String,
+    default: '消息'
+  },
+  showFooter: {
+    type: Boolean,
+    default: false
   }
+})
+const emit = defineEmits(['close', 'update:show'])
+const close = () => {
+  emit('close')
+  emit('update:show', false)
 }
+const visibleIn = ref(props.show)
+onMounted(() => {
+  // 如果有需要初始化的操作，可以放在这里
+})
+
 </script>
 
 <style lang="scss"></style>

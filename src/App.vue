@@ -34,7 +34,8 @@
       :visible.sync="viewerVisible"
       :need-toast="false"
     />
-    <TemplateViews v-if="templateVisible" :visible.sync="templateVisible" @load="loadTemp" />
+    <TemplateViews v-if="templateVisible" :visible="templateVisible"
+                   @load="loadTemp" @update:visible="templateVisible = $event" />
     <div class="fork-me">
       <a href="https://github.com/ROYIANS/print-template-designer" target="_blank">
         <i class="ri-github-line"></i>
@@ -44,115 +45,109 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import toast from '@/utils/toast'
 import PtdViewer from '@/components/Viewer/PtdViewer'
 import TemplateViews from '@/views/templates/TemplateViews'
 import { mapState } from 'vuex'
+import { onMounted, computed, nextTick, ref, reactive } from 'vue'
+const designer = ref();
+const viewerVisible = ref(false)
+const templateVisible = ref(false)
+const fileList = ref([])
 
-export default {
-  name: 'App',
-  async mounted() {
-    await toast('欢迎使用ROYIANS的打印模板设计器，仅个人学习使用', 'success', 3000)
-    await toast('当前网页预览的是最新开发分支，请留意', 'warning', 3000)
-    console.log('contributed by ROYIANS@Little-Dreamland﹢')
-  },
-  components: {
-    PtdViewer,
-    TemplateViews
-  },
-  computed: {
-    ...mapState({
-      pageConfig: (state) => state.printTemplateModule.pageConfig,
-      componentData: (state) => state.printTemplateModule.componentData,
-      dataSource: (state) => state.printTemplateModule.dataSource,
-      dataSet: (state) => state.printTemplateModule.dataSet
-    })
-  },
-  data() {
-    return {
-      fileList: [],
-      toolbarSlotConfig: [
-        {
-          name: '从报表配置拉取表格',
-          icon: 'ri-table-line',
-          event: () => {
-            toast('(开发者自定义按钮)')
-          }
-        }
-      ],
-      headIconConfig: [
-        {
-          name: 'template',
-          icon: 'ri-file-word-2-line',
-          title: '预设模板',
-          event: () => {
-            this.templateVisible = true
-          }
-        },
-        {
-          name: 'dataset',
-          icon: 'ri-database-line',
-          title: '数据源模拟',
-          event: () => {
-            toast('开发中')
-          }
-        },
-        {
-          name: 'ShowViewer',
-          icon: 'ri-eye-line',
-          title: '预览设计模板',
-          event: () => {
-            this.showViewer()
-          }
-        }
-      ],
-      preDataSource: [
-        {
-          id: '0001',
-          title: '当前日期（中文）',
-          field: 'curDateChn',
-          typeName: 'BigCurDate'
-        },
-        {
-          id: '0002',
-          title: '当前日期（数字）',
-          field: 'curDateNum',
-          typeName: 'CurDateTime'
-        },
-        {
-          id: '0003',
-          title: '当前日期时间（数字）',
-          field: 'curDateTime',
-          typeName: 'CurDateTime'
-        },
-        {
-          id: '0004',
-          title: '表格数据',
-          field: 'tableData',
-          typeName: 'Array'
-        }
-      ],
-      preDataSet: {
-        curDateTime: 'YYYY.MM.DD hh:mm',
-        curDateChn: '',
-        curDateNum: 'YYYY年MM月DD日',
-        currentTime: 'YYYY年MM月DD日',
-        tableData: [{}, {}, {}, {}]
-      },
-      viewerVisible: false,
-      templateVisible: false
-    }
-  },
-  methods: {
-    showViewer() {
-      this.viewerVisible = true
-    },
-    loadTemp(data) {
-      this.$refs.designer.loadTemplateData(data)
-      this.templateVisible = false
+let toolbarSlotConfig = [
+  {
+    name: '从报表配置拉取表格',
+    icon: 'ri-table-line',
+    event: () => {
+      toast('(开发者自定义按钮)')
     }
   }
+]
+let headIconConfig = [
+  {
+    name: 'template',
+    icon: 'ri-file-word-2-line',
+    title: '预设模板',
+    event: () => {
+      templateVisible.value =true;
+    }
+  },
+  {
+    name: 'dataset',
+    icon: 'ri-database-line',
+    title: '数据源模拟',
+    event: () => {
+      toast('开发中')
+    }
+  },
+  {
+    name: 'ShowViewer',
+    icon: 'ri-eye-line',
+    title: '预览设计模板',
+    event: () => {
+      this.showViewer()
+    }
+  }
+]
+const preDataSource = [
+  {
+    id: '0001',
+    title: '当前日期（中文）',
+    field: 'curDateChn',
+    typeName: 'BigCurDate'
+  },
+  {
+    id: '0002',
+    title: '当前日期（数字）',
+    field: 'curDateNum',
+    typeName: 'CurDateTime'
+  },
+  {
+    id: '0003',
+    title: '当前日期时间（数字）',
+    field: 'curDateTime',
+    typeName: 'CurDateTime'
+  },
+  {
+    id: '0004',
+    title: '表格数据',
+    field: 'tableData',
+    typeName: 'Array'
+  }
+]
+
+onMounted(() => {
+  document.title = 'ROYIANS打印模板设计器'
+  nextTick(() => {
+    toast('欢迎使用ROYIANS的打印模板设计器，仅个人学习使用', 'success', 3000)
+    toast('当前网页预览的是最新开发分支，请留意', 'warning', 3000)
+  })
+})
+
+computed(mapState, () => {
+  return {
+    pageConfig: (state) => state.printTemplateModule.pageConfig,
+    componentData: (state) => state.printTemplateModule.componentData,
+    dataSource: (state) => state.printTemplateModule.dataSource,
+    dataSet: (state) => state.printTemplateModule.dataSet
+  }
+})
+
+const preDataSet = {
+  curDateTime: 'YYYY.MM.DD hh:mm',
+  curDateChn: '',
+  curDateNum: 'YYYY年MM月DD日',
+  currentTime: 'YYYY年MM月DD日',
+  tableData: [{}, {}, {}, {}]
+}
+const showViewer = () => {
+  viewerVisible.value = true
+}
+const loadTemp = (data) => {
+  designer.value.loadTemplateData(data)
+  templateVisible.value = false
 }
 </script>
 
